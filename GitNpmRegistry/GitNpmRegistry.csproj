@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
+    <UserSecretsId>1d9d5379-0dd7-4a3a-a194-acb5a599655f</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,6 +12,7 @@
   <ItemGroup>
     <PackageReference Include="LibGit2Sharp" Version="0.25.2" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="MimeKit" Version="2.0.6" />
   </ItemGroup>
 
 </Project>

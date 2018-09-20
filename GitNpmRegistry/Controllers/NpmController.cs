@@ -13,8 +13,10 @@ namespace GitNpmRegistry.Controllers
 
         [HttpGet("{package}/{path*}")]
         public async Task<IActionResult> Get(
-            [FromServices] string package,
-            [FromServices] string path
+            [FromServices] UIProxyConfig config,
+            [FromServices] IGitService git,
+            [FromQuery] string package,
+            [FromQuery] string path
             ) {
 
             var tokens = package.Split('@');
@@ -22,10 +24,24 @@ namespace GitNpmRegistry.Controllers
                 return new StatusCodeResult(402) {  };
             }
             var version = tokens[1];
+
+            var up = config.Get(package);
+            if (up == null) {
+                throw new HttpStatusException(404, $"No package found {package}");
+            }
+
             package = tokens[0];
 
+            string tag = version;
+            if (!tag.StartsWith("v"))
+            {
+                tag = "v" + tag;
+            }
 
 
+            await git.BuildTag(up, tag);
+
+            return Ok();
         }
 
     }

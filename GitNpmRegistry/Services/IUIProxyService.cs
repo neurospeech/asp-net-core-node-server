@@ -1,12 +1,10 @@
-﻿using HybridJet.Mvc;
-using HybridJet.UIProxy;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using MimeKit;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using MimeKit;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
