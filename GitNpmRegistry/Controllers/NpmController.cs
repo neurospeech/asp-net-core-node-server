@@ -10,13 +10,45 @@ namespace GitNpmRegistry.Controllers
     [Route("npm")]
     public class NpmController: Controller
     {
+        [HttpGet("build/{package}")]
+        public async Task<IActionResult> Build(
+            [FromServices] UIProxyConfig config,
+            [FromServices] IGitService git,
+            [FromRoute] string package
+            ) {
 
-        [HttpGet("{package}/{path*}")]
+            var tokens = package.Split('@');
+            if (tokens.Length == 1)
+            {
+                return new StatusCodeResult(402) { };
+            }
+            var version = tokens[1];
+
+            var up = config.Get(package);
+            if (up == null)
+            {
+                throw new HttpStatusException(404, $"No package found {package}");
+            }
+
+            package = tokens[0];
+
+            string tag = version;
+            if (!tag.StartsWith("v"))
+            {
+                tag = "v" + tag;
+            }
+
+            await git.BuildTag(up, tag);
+
+            return Ok();
+        }
+
+        [HttpGet("package/{package}/{*path}")]
         public async Task<IActionResult> Get(
             [FromServices] UIProxyConfig config,
             [FromServices] IGitService git,
-            [FromQuery] string package,
-            [FromQuery] string path
+            [FromRoute] string package,
+            [FromRoute] string path
             ) {
 
             var tokens = package.Split('@');
