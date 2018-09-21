@@ -12,7 +12,9 @@ namespace GitNpmRegistry
         {
             tempRoot = tempRoot ?? Path.GetTempPath();
             File = new FileInfo($"{tempRoot}\\tmp-bat-{Guid.NewGuid().ToString()}.{ext ?? "bat"}");
-            // if(File.Directory.Exists)
+            if (!File.Directory.Exists) {
+                File.Directory.Create();
+            }
         }
 
         public async Task AppendLines(params string[] lines) {

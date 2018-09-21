@@ -41,6 +41,13 @@ namespace GitNpmRegistry
 
             var model = pp.PackageConfig;
 
+            if (string.IsNullOrWhiteSpace(model.Username)) {
+                model.Username = config.Username;
+            }
+            if (string.IsNullOrWhiteSpace(model.Password)) {
+                model.Password = config.Password;
+            }
+
             var vtag = pp.Tag;
 
             LibGit2Sharp.Handlers.CredentialsHandler credentialProvider = (url, usernameFromUrl, types)
@@ -95,7 +102,7 @@ namespace GitNpmRegistry
                     await ExtractTree(commit.Tree, tempRoot);
 
 
-                    BuildTask task = new BuildTask(contextAccessor, model.Package, vtag, tempRoot.FullName);
+                    BuildTask task = new BuildTask(config, contextAccessor, model.Package, vtag, tempRoot.FullName);
                     await task.RunAsync();
 
 

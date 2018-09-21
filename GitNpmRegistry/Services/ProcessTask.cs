@@ -18,9 +18,9 @@ namespace GitNpmRegistry
 
         private CancellationToken _cancellationToken;
 
-        public string Log { get; set; }
+        public string Log { get; set; } = "";
 
-        public string Error { get; set; }
+        public string Error { get; set; } = "";
 
         public ProcessTask(string fileName, string directory, CancellationToken cancellationToken)
         {

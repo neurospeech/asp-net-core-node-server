@@ -22,9 +22,9 @@ namespace GitNpmRegistry.Controllers
 
             await git.BuildTag(pp);
 
-            TarGZTask task = new TarGZTask(pp.CachePath, pp.TarFile, pp.TagFolder);
+            // TarGZTask task = new TarGZTask(pp.CachePath, pp.TarFile, pp.TagFolder);
 
-            await task.CreateAsync();
+            // await task.CreateAsync();
 
             return File(System.IO.File.OpenRead(pp.TarFile), MimeKit.MimeTypes.GetMimeType(pp.TarFile));
 

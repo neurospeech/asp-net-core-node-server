@@ -5,6 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.IO;
 using Microsoft.AspNetCore.Http;
+using System.Threading;
+using System.Text;
 
 namespace GitNpmRegistry
 {
@@ -21,12 +23,15 @@ namespace GitNpmRegistry
         readonly string path;
         readonly string package;
         readonly string version;
+        readonly UIProxyConfig config;
         public BuildTask(
+            UIProxyConfig config,
             IHttpContextAccessor contextAccessor,
             string package,
             string version,
             string path)
         {
+            this.config = config;
             this.version = version;
             this.package = package;
             this.contextAccessor = contextAccessor;
@@ -90,7 +95,26 @@ namespace GitNpmRegistry
             await File.WriteAllTextAsync(packageInfo, json.ToString(Newtonsoft.Json.Formatting.Indented));
 
         }
-        public async Task<BuildResult> RunAsync() {
+
+
+        public async Task Build(string command, TextWriter logger, CancellationToken token) {
+
+            using (var batch = new TemporaryFile("bat", config.CachePath + "\\bat"))
+            {
+
+                await batch.AppendLines(command);
+
+                var processTask = new ProcessTask(batch.File.FullName, this.path, token);
+
+                var status = await processTask.RunAsync();
+
+                if (status != 0) {
+                    throw new InvalidOperationException(processTask.Error + "\r\n" + processTask.Log);
+                }
+            }
+        }
+
+        public async Task<string> RunAsync() {
 
             await UpdateDependencies();
 
@@ -98,37 +122,18 @@ namespace GitNpmRegistry
 
             System.Threading.CancellationTokenSource ct = new System.Threading.CancellationTokenSource();
 
-            using (var npmInstall = new TemporaryFile("bat"))
+
+            DirectoryDelete(this.path + "\\node_modules");
+            DirectoryDelete(this.path + "\\dist");
+
+            using (StringWriter writer = new StringWriter())
             {
 
-                using (var npmBuild = new TemporaryFile("bat"))
-                {
+                await Build($"npm install", writer, ct.Token);
+                await Build($"tsc", writer, ct.Token);
+                await Build($"npm pack", writer, ct.Token);
 
-                    DirectoryDelete(this.path + "\\node_modules");
-                    DirectoryDelete(this.path + "\\dist");
-
-                    await npmInstall.AppendLines($"npm install");
-
-                    await npmBuild.AppendLines($"tsc");
-
-                    var processTask = new ProcessTask(npmInstall.File.FullName, this.path, ct.Token);
-
-                    var result = await processTask.RunAsync();
-
-                    if (result == 0) {
-
-                        processTask = new ProcessTask(npmBuild.File.FullName, this.path, ct.Token);
-                        result = await processTask.RunAsync();
-                    }
-
-                    return new BuildResult
-                    {
-                        Success = result == 0,
-                        Log = processTask.Log,
-                        Error = processTask.Error
-                    };
-                }
-                
+                return writer.ToString();
             }
 
         }

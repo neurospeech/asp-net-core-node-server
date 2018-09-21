@@ -54,6 +54,7 @@ namespace GitNpmRegistry
             if (tarArchive.RootPath.EndsWith("/"))
                 tarArchive.RootPath = tarArchive.RootPath.Remove(tarArchive.RootPath.Length - 1);
 
+
             AddDirectoryFilesToTar(tarArchive, sourceDirectory, true);
 
             tarArchive.Close();
@@ -74,7 +75,7 @@ namespace GitNpmRegistry
             string[] filenames = Directory.GetFiles(sourceDirectory);
             foreach (string filename in filenames)
             {
-                tarEntry = TarEntry.CreateEntryFromFile(filename);
+                tarEntry = TarEntry.CreateEntryFromFile(filename.Replace('\\','/'));
                 tarArchive.WriteEntry(tarEntry, true);
             }
 

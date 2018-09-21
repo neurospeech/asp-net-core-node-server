@@ -6,14 +6,18 @@ namespace GitNpmRegistry
     public class PackagePath
     {
 
-        string version;
+        
         readonly UIProxyConfig config;
 
         public UIProxyConfig.ProxyConfig PackageConfig { get; }
         public string Package { get; }
         public string Tag { get; }
 
-        public string TarFile => $"{config.CachePath}\\git-npm\\{Package}\\tars\\t{Tag}.tar.gz";
+        public string Version => Tag.StartsWith("v") ? Tag.Substring(1) : Tag;
+
+        // public string TarFile => $"{config.CachePath}\\git-npm\\{Package}\\tars\\t{Tag}.tar.gz";
+
+        public string TarFile => $"{TagFolder}\\{Package}-{Version}.tgz";
 
         public string GitFolder => $"{config.CachePath}\\git-npm\\{Package}\\git";
 
@@ -30,7 +34,7 @@ namespace GitNpmRegistry
                 throw new HttpStatusException(402, "tag is missing");
             }
 
-            this.version = tokens[1];
+            string version = tokens[1];
 
             this.PackageConfig = config.Get(package);
             if (PackageConfig == null)
