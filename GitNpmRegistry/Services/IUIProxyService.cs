@@ -22,6 +22,7 @@ namespace GitNpmRegistry
     {
 
         Task<JSAppModel> GetPackageConfigAsync(string package);
+        UIProxyConfig.ProxyConfig GetConfig(string package);
 
     }
 
@@ -58,6 +59,16 @@ namespace GitNpmRegistry
             }
             this.cache = cache;
 
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="package"></param>
+        /// <returns></returns>
+        public UIProxyConfig.ProxyConfig GetConfig(string package)
+        {
+            return config.Get(package);
         }
 
         public async Task<JSAppModel> GetPackageConfigAsync(string package)
@@ -137,5 +148,6 @@ namespace GitNpmRegistry
 
             return cachedModel.Clone();
         }
+
     }
 }
