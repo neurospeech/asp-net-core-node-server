@@ -1,4 +1,6 @@
 ﻿using LibGit2Sharp;
+using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,26 +11,37 @@ namespace GitNpmRegistry
 {
     public interface IGitService
     {
-        Task<bool> BuildTag(UIProxyConfig.ProxyConfig config, string tag);
+        Task<bool> BuildTag(PackagePath pp);
     }
 
     public class GitService : IGitService
     {
         readonly UIProxyConfig config;
-        public GitService(UIProxyConfig config)
+        readonly IHttpContextAccessor contextAccessor;
+
+        public GitService(UIProxyConfig config, IHttpContextAccessor contextAccessor)
         {
             this.config = config;
+            this.contextAccessor = contextAccessor;
         }
 
-        private async Task Download(UIProxyConfig.ProxyConfig model, string vtag) {
+        private async Task Download(PackagePath pp) {
 
-            string root = $"{config.CachePath}/{model.Package}@{vtag}";
+            var root = new DirectoryInfo(pp.TagFolder);
 
-            if (Directory.Exists(root)) {
+            if (root.Exists) {
                 return;
             }
 
-            string gitPath = $"{config.CachePath}/{model.Package}/git";
+            if (!root.Parent.Exists) {
+                root.Parent.Create();
+            }
+
+            string gitPath = pp.GitFolder;
+
+            var model = pp.PackageConfig;
+
+            var vtag = pp.Tag;
 
             LibGit2Sharp.Handlers.CredentialsHandler credentialProvider = (url, usernameFromUrl, types)
                            => new UsernamePasswordCredentials
@@ -81,12 +94,12 @@ namespace GitNpmRegistry
 
                     await ExtractTree(commit.Tree, tempRoot);
 
-                    // do build here....
 
-                    BuildTask task = new BuildTask();
-                    await task.RunAsync(tempRoot.FullName);
+                    BuildTask task = new BuildTask(contextAccessor, model.Package, vtag, tempRoot.FullName);
+                    await task.RunAsync();
 
-                    tempRoot.MoveTo(root);
+
+                    tempRoot.MoveTo(root.FullName);
 
                 } catch {
                     // tempRoot.Delete();
@@ -96,6 +109,8 @@ namespace GitNpmRegistry
             }
 
         }
+
+
         async Task ExtractTree(Tree tree, DirectoryInfo tempRoot)
         {
             foreach (var treeEntry in tree)
@@ -129,9 +144,9 @@ namespace GitNpmRegistry
 
         private Dictionary<string, BuildInfo> Locks = new Dictionary<string, BuildInfo>();
 
-        public async Task<bool> BuildTag(UIProxyConfig.ProxyConfig up, string tag)
+        public async Task<bool> BuildTag(PackagePath pp)
         {
-            string root = $"{config.CachePath}\\{up.Package}@{tag}";
+            string root = pp.TagFolder;
 
             if (Directory.Exists(root)) {
                 return true;
@@ -149,7 +164,7 @@ namespace GitNpmRegistry
             if (lockObject.IsBuilding)
                 return false;
 
-            await Download(up, tag);
+            await Download(pp);
 
             lockObject.IsBuilding = false;
 

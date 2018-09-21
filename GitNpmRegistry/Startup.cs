@@ -34,6 +34,8 @@ namespace GitNpmRegistry
 
             services.AddSingleton<IGitService, GitService>();
 
+            services.AddHttpContextAccessor();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
         }

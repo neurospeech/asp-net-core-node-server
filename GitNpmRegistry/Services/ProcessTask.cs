@@ -22,7 +22,7 @@ namespace GitNpmRegistry
 
         public string Error { get; set; }
 
-        public ProcessTask(string fileName, CancellationToken cancellationToken)
+        public ProcessTask(string fileName, string directory, CancellationToken cancellationToken)
         {
             var fileInfo = new FileInfo(fileName);
 
@@ -33,7 +33,7 @@ namespace GitNpmRegistry
                 RedirectStandardError = true,
                 RedirectStandardOutput = true,
                 CreateNoWindow = false,
-                WorkingDirectory = fileInfo.DirectoryName,
+                WorkingDirectory = directory ?? fileInfo.DirectoryName,
                 //LoadUserProfile = true
             };
 

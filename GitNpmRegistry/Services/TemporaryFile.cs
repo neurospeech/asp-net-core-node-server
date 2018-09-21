@@ -20,6 +20,7 @@ namespace GitNpmRegistry
                 foreach (var line in lines) {
                     await s.WriteLineAsync(line);
                 }
+                await s.FlushAsync();
             }
         }
 

@@ -7,9 +7,29 @@ using System.Threading.Tasks;
 namespace GitNpmRegistry.Controllers
 {
 
+
     [Route("npm")]
     public class NpmController: Controller
     {
+        [HttpGet("tar/{package}/{file}")]
+        public async Task<IActionResult> Tar(
+            [FromServices] UIProxyConfig config,
+            [FromServices] IGitService git,
+            [FromRoute] string package
+            ) {
+
+            PackagePath pp = new PackagePath(config, package);
+
+            await git.BuildTag(pp);
+
+            TarGZTask task = new TarGZTask(pp.CachePath, pp.TarFile, pp.TagFolder);
+
+            await task.CreateAsync();
+
+            return File(System.IO.File.OpenRead(pp.TarFile), MimeKit.MimeTypes.GetMimeType(pp.TarFile));
+
+        }
+
         [HttpGet("build/{package}")]
         public async Task<IActionResult> Build(
             [FromServices] UIProxyConfig config,
@@ -17,28 +37,9 @@ namespace GitNpmRegistry.Controllers
             [FromRoute] string package
             ) {
 
-            var tokens = package.Split('@');
-            if (tokens.Length == 1)
-            {
-                return new StatusCodeResult(402) { };
-            }
-            var version = tokens[1];
+            PackagePath pp = new PackagePath(config, package);
 
-            var up = config.Get(package);
-            if (up == null)
-            {
-                throw new HttpStatusException(404, $"No package found {package}");
-            }
-
-            package = tokens[0];
-
-            string tag = version;
-            if (!tag.StartsWith("v"))
-            {
-                tag = "v" + tag;
-            }
-
-            await git.BuildTag(up, tag);
+            await git.BuildTag(pp);
 
             return Ok();
         }
@@ -51,29 +52,15 @@ namespace GitNpmRegistry.Controllers
             [FromRoute] string path
             ) {
 
-            var tokens = package.Split('@');
-            if (tokens.Length == 1) {
-                return new StatusCodeResult(402) {  };
-            }
-            var version = tokens[1];
+            PackagePath pp = new PackagePath(config, package);
 
-            var up = config.Get(package);
-            if (up == null) {
-                throw new HttpStatusException(404, $"No package found {package}");
-            }
+            await git.BuildTag(pp);
 
-            package = tokens[0];
+            // deliver file...
 
-            string tag = version;
-            if (!tag.StartsWith("v"))
-            {
-                tag = "v" + tag;
-            }
+            string filePath = pp.TagFolder + "\\" + path;
 
-
-            await git.BuildTag(up, tag);
-
-            return Ok();
+            return File(System.IO.File.OpenRead(filePath), MimeKit.MimeTypes.GetMimeType(filePath));
         }
 
     }
