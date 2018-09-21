@@ -7,6 +7,7 @@ using System.IO;
 using Microsoft.AspNetCore.Http;
 using System.Threading;
 using System.Text;
+using Microsoft.ApplicationInsights;
 
 namespace GitNpmRegistry
 {
@@ -116,24 +117,33 @@ namespace GitNpmRegistry
 
         public async Task<string> RunAsync() {
 
-            await UpdateDependencies();
-
-            await DisableWatch();
-
-            System.Threading.CancellationTokenSource ct = new System.Threading.CancellationTokenSource();
-
-
-            DirectoryDelete(this.path + "\\node_modules");
-            DirectoryDelete(this.path + "\\dist");
-
-            using (StringWriter writer = new StringWriter())
+            try
             {
 
-                await Build($"npm install", writer, ct.Token);
-                await Build($"tsc", writer, ct.Token);
-                await Build($"npm pack", writer, ct.Token);
+                await UpdateDependencies();
 
-                return writer.ToString();
+                await DisableWatch();
+
+                System.Threading.CancellationTokenSource ct = new System.Threading.CancellationTokenSource();
+
+
+                DirectoryDelete(this.path + "\\node_modules");
+                DirectoryDelete(this.path + "\\dist");
+
+                using (StringWriter writer = new StringWriter())
+                {
+
+                    await Build($"npm install", writer, ct.Token);
+                    await Build($"tsc", writer, ct.Token);
+                    await Build($"npm pack", writer, ct.Token);
+
+                    return writer.ToString();
+                }
+            }
+            catch (Exception ex) {
+                TelemetryClient client = new TelemetryClient();
+                client.TrackException(ex);
+                throw;
             }
 
         }

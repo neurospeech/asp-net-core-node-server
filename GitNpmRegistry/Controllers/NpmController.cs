@@ -11,6 +11,7 @@ namespace GitNpmRegistry.Controllers
     [Route("npm")]
     public class NpmController: Controller
     {
+
         [HttpGet("tar/{package}/{file}")]
         public async Task<IActionResult> Tar(
             [FromServices] UIProxyConfig config,
@@ -21,10 +22,6 @@ namespace GitNpmRegistry.Controllers
             PackagePath pp = new PackagePath(config, package);
 
             await git.BuildTag(pp);
-
-            // TarGZTask task = new TarGZTask(pp.CachePath, pp.TarFile, pp.TagFolder);
-
-            // await task.CreateAsync();
 
             return File(System.IO.File.OpenRead(pp.TarFile), MimeKit.MimeTypes.GetMimeType(pp.TarFile));
 

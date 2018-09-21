@@ -3,6 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <UserSecretsId>1d9d5379-0dd7-4a3a-a194-acb5a599655f</UserSecretsId>
+    <ApplicationInsightsResourceId>/subscriptions/ea151922-9ee2-462b-958b-20d392d62c01/resourcegroups/Live-800-US/providers/microsoft.insights/components/GitNpmRegistry</ApplicationInsightsResourceId>
+    <ApplicationInsightsAnnotationResourceId>/subscriptions/ea151922-9ee2-462b-958b-20d392d62c01/resourcegroups/Live-800-US/providers/microsoft.insights/components/GitNpmRegistry</ApplicationInsightsAnnotationResourceId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,11 +13,16 @@
 
   <ItemGroup>
     <PackageReference Include="LibGit2Sharp" Version="0.25.2" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.1" />
     <PackageReference Include="MimeKit" Version="2.0.6" />
     <PackageReference Include="SharpZipLib" Version="1.0.0" />
     <PackageReference Include="System.Diagnostics.Process" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services" />
   </ItemGroup>
 
 </Project>
