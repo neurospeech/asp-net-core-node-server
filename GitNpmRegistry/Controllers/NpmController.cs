@@ -44,6 +44,34 @@ namespace GitNpmRegistry.Controllers
             return Ok();
         }
 
+        [HttpGet("uiv/{package}/{*path}")]
+        public async Task<IActionResult> GetUIView(
+            [FromServices] UIProxyConfig config,
+            [FromServices] IGitService git,
+            [FromServices] IUIProxyService proxyService,
+            [FromRoute] string package,
+            [FromRoute] string path,
+            [FromQuery] bool designMode = false,
+            [FromQuery] string platform = "web"
+            ) {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                return NotFound();
+            }
+
+            var packageConfig = await proxyService.GetPackageConfigAsync(package);
+
+            if (!path.EndsWith(".js", StringComparison.OrdinalIgnoreCase))
+            {
+                path = $"{path}.js";
+            }
+
+            packageConfig.StartScript = $"UMD.loadView(\"{packageConfig.Package.Package}/{path}\", {(designMode ? "true" : "false")})";
+            packageConfig.Platform = platform;
+            string isWeb = (string.IsNullOrWhiteSpace(platform) || platform.EqualsIgnoreCase("web")) ? "Web" : "";
+            return View($"~/Views/Npm/{isWeb}JSApplication.cshtml", packageConfig);
+        }
+
         [HttpGet("package/{package}/{*path}")]
         public async Task<IActionResult> Get(
             [FromServices] UIProxyConfig config,

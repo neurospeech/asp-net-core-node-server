@@ -1,0 +1,11 @@
+﻿@model GitNpmRegistry.JSAppModel;
+@{
+    Layout = null;
+}
+@foreach (var module in Model.Modules)
+{
+    @: UMD.map("@module.Key", "@module.Value");
+    @:
+}
+@Html.Raw(Model.StartScript);
+
