@@ -62,4 +62,5 @@ typings/
 /.vs
 /GitNpmRegistry/obj
 /GitNpmRegistry/bin
+/GitNpmRegistry/appsettings.Development.json
 
