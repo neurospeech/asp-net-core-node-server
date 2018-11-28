@@ -64,3 +64,9 @@ typings/
 /GitNpmRegistry/bin
 /GitNpmRegistry/appsettings.Development.json
 
+/NodeServer/obj
+/NodeServer/bin/
+/NodeServerTest/bin/
+/NodeServerTest/obj
+/SampleWebApp/obj
+/SampleWebApp/bin
