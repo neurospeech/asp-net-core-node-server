@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using NodeServer.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace NodeServer
 {
@@ -106,7 +107,8 @@ namespace NodeServer
                 await InstallAsync(pp);
 
                 var s = NodeServicesFactory.CreateNodeServices(new NodeServicesOptions(services) {
-                    ProjectPath = pp.TagFolder
+                    ProjectPath = pp.TagFolder,
+                    NodeInstanceOutputLogger = services.GetService<ILogger<NodeServer>>()
                 });
 
                 return new NodePackage {

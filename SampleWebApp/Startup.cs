@@ -28,8 +28,9 @@ namespace SampleWebApp
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddNodeServer(new NodeServerOptions {
-                 PrivateNPMUrlTemplate = "................./{package}/-/{id}-{version}.tgz",
+                 PrivateNPMUrlTemplate = "https://registry.npmjs.org/{package}/-/{id}-{version}.tgz",
                  PrivatePackages = new string[] {
+                     "@web-atoms/asp-net-core-node-server-test@1.0.5"
                  }
             });
 

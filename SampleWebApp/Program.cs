@@ -19,6 +19,9 @@ namespace SampleWebApp
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .ConfigureLogging(lb => {
+                    lb.AddConsole();
+                })
                 .UseStartup<Startup>();
     }
 }

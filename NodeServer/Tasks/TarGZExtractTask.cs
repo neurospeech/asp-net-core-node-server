@@ -14,10 +14,16 @@ namespace NodeServer.Tasks
 
         PackagePath packagePath;
         readonly string tempRoot;
+
+        readonly DirectoryInfo TagFolder;
+        readonly DirectoryInfo TempFolder;
+
         public TarGZExtractTask(PackagePath pp, string tempRoot)
         {
             this.tempRoot = tempRoot;
             this.packagePath = pp;
+            this.TagFolder = new DirectoryInfo(pp.TagFolder);
+            this.TempFolder = new DirectoryInfo(tempRoot + "\\tmp\\" + Guid.NewGuid());
 
         }
 
@@ -37,13 +43,12 @@ namespace NodeServer.Tasks
                             {
                                 // tar.ExtractContents(packagePath.TagFolder);
 
-                                var temp = Directory.CreateDirectory(tempRoot + "\\tmp\\" + Guid.NewGuid().ToString());
-
-                                tar.ExtractContents(temp.FullName);
-
-                                Directory.Move(temp.FullName + "\\package", packagePath.TagFolder);
-
-                                temp.Delete(true);
+                                tar.ExtractContents(TempFolder.FullName);
+                                var parent = TempFolder.Parent;
+                                if (!parent.Exists) {
+                                    parent.Create();
+                                }
+                                Directory.Move(TempFolder.FullName + "\\package", TagFolder.FullName);
 
                             }
                         }
@@ -53,8 +58,14 @@ namespace NodeServer.Tasks
             }
             catch
             {
-                Directory.Delete(packagePath.TagFolder, true);
+                if (TagFolder.Exists)
+                {
+                    TagFolder.Delete(true);
+                }
                 throw;
+            } finally
+            {
+                TempFolder.Delete(true);
             }
         }
 
