@@ -44,7 +44,7 @@ namespace NodeServer.Tasks
                                 // tar.ExtractContents(packagePath.TagFolder);
 
                                 tar.ExtractContents(TempFolder.FullName);
-                                var parent = TempFolder.Parent;
+                                var parent = TagFolder.Parent;
                                 if (!parent.Exists) {
                                     parent.Create();
                                 }
