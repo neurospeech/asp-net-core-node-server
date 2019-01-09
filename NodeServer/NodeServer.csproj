@@ -4,6 +4,8 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <ApplicationIcon />
     <OutputType>Library</OutputType>
+    <PackageId>NeuroSpeech.NodeServer</PackageId>
+    <Version>1.0.1</Version>
     <StartupObject />
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
