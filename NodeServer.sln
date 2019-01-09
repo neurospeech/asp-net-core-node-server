@@ -10,9 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NodeServer", "NodeServer\NodeServer.csproj", "{3521B14E-8D6A-4E4E-B179-89D1039422E7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NodeServerTest", "NodeServerTest\NodeServerTest.csproj", "{E6682D8C-5BB9-4924-89E2-95C6BE50125E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleWebApp", "SampleWebApp\SampleWebApp.csproj", "{FFD5CE20-DF8A-4C3E-85F4-51DB5775AB5B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NodeServerTest", "NodeServerTest\NodeServerTest.csproj", "{E6682D8C-5BB9-4924-89E2-95C6BE50125E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,10 +26,6 @@ Global
 		{E6682D8C-5BB9-4924-89E2-95C6BE50125E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E6682D8C-5BB9-4924-89E2-95C6BE50125E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E6682D8C-5BB9-4924-89E2-95C6BE50125E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FFD5CE20-DF8A-4C3E-85F4-51DB5775AB5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FFD5CE20-DF8A-4C3E-85F4-51DB5775AB5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FFD5CE20-DF8A-4C3E-85F4-51DB5775AB5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FFD5CE20-DF8A-4C3E-85F4-51DB5775AB5B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
