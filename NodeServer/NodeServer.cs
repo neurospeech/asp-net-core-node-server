@@ -17,7 +17,7 @@ namespace NodeServer
     {
         public string TempFolder { get; set; } = "d:\\temp\\ns-npm";
 
-        public string PrivateNPMUrlTemplate { get; set; }
+        public string NPMRegistry { get; set; }
 
         public string[] PrivatePackages { get; set; }
     }
@@ -30,13 +30,16 @@ namespace NodeServer
         readonly IEnumerable<PackagePath> privatePackages;
         readonly string tempFolder;
         readonly string npmUrlTemplate;
+        string registry;
 
         public NodeServer(
             IServiceProvider services,
             NodeServerOptions options)
         {
             this.tempFolder = options.TempFolder;
-            this.npmUrlTemplate = options.PrivateNPMUrlTemplate;
+            var reg = options.NPMRegistry.TrimEnd('/') + "/";
+            this.npmUrlTemplate =  reg + "{package}/-/{id}-{version}.tgz";
+            this.registry = reg;
             this.privatePackages = options.PrivatePackages.Select( x => {
                 return new PackagePath(x.ParseNPMPath(), true, tempFolder, this.npmUrlTemplate);
             } );
@@ -83,7 +86,7 @@ namespace NodeServer
                 {
                     System.Threading.CancellationTokenSource ct = new System.Threading.CancellationTokenSource();
 
-                    await batch.AppendLines("npm install");
+                    await batch.AppendLines("npm install --registry " + this.registry);
 
                     var processTask = new ProcessTask(batch.File.FullName, packagePath.TagFolder , ct.Token);
 
