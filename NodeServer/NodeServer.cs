@@ -107,12 +107,10 @@ namespace NodeServer
             try
             {
 
-                if (Directory.Exists(packagePath.TagFolder))
+                if (!Directory.Exists(packagePath.TagFolder))
                 {
-                    return;
+                    await DownloadAsync(packagePath);
                 }
-
-                await DownloadAsync(packagePath);
 
                 if (!Directory.Exists($"{packagePath.TagFolder}\\node_modules"))
                 {
