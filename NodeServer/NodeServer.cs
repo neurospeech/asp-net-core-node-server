@@ -77,25 +77,65 @@ namespace NodeServer
 
         }
 
+        private Dictionary<string, bool> loading = new Dictionary<string, bool>();
+
         public async Task InstallAsync(PackagePath packagePath)
         {
-            await DownloadAsync(packagePath);
 
-            if (!Directory.Exists($"{packagePath.TagFolder}\\node_modules")) {
-                using (var batch = new TemporaryFile("bat", packagePath.TempRoot + "\\tmp\\bat"))
+            bool wait = false;
+
+            while (true) {
+         
+                lock(loading)
                 {
-                    System.Threading.CancellationTokenSource ct = new System.Threading.CancellationTokenSource();
-
-                    await batch.AppendLines("npm install --registry " + this.registry);
-
-                    var processTask = new ProcessTask(batch.File.FullName, packagePath.TagFolder , ct.Token);
-
-                    var status = await processTask.RunAsync();
-
-                    if (status != 0)
+                    if(loading.ContainsKey(packagePath.TagFolder))
                     {
-                        throw new InvalidOperationException(processTask.Error + "\r\n" + processTask.Log);
+                        wait = true;
+                    } else
+                    {
+                        wait = false;
+                        loading[packagePath.TagFolder] = true;
+                        break;
                     }
+                }
+                if (wait)
+                {
+                    await Task.Delay(1000);
+                }
+            }
+
+            try
+            {
+
+                if (Directory.Exists(packagePath.TagFolder))
+                {
+                    return;
+                }
+
+                await DownloadAsync(packagePath);
+
+                if (!Directory.Exists($"{packagePath.TagFolder}\\node_modules"))
+                {
+                    using (var batch = new TemporaryFile("bat", packagePath.TempRoot + "\\tmp\\bat"))
+                    {
+                        System.Threading.CancellationTokenSource ct = new System.Threading.CancellationTokenSource();
+
+                        await batch.AppendLines("npm install --registry " + this.registry);
+
+                        var processTask = new ProcessTask(batch.File.FullName, packagePath.TagFolder, ct.Token);
+
+                        var status = await processTask.RunAsync();
+
+                        if (status != 0)
+                        {
+                            throw new InvalidOperationException(processTask.Error + "\r\n" + processTask.Log);
+                        }
+                    }
+                }
+            } finally {
+                lock (loading)
+                {
+                    loading.Remove(packagePath.TagFolder);
                 }
             }
         }
