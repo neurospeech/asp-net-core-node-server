@@ -9,69 +9,78 @@ using System.Threading.Tasks;
 
 namespace NodeServer.Tasks
 {
-    public class TarGZExtractTask : IDisposable
-    {
+    //public class TarGZExtractTask : IDisposable
+    //{
 
-        PackagePath packagePath;
-        readonly string tempRoot;
+    //    PackagePath packagePath;
+    //    readonly string tempRoot;
 
-        readonly DirectoryInfo TagFolder;
-        readonly DirectoryInfo TempFolder;
+    //    readonly DirectoryInfo TagFolder;
+    //    readonly DirectoryInfo TempFolder;
 
-        public TarGZExtractTask(PackagePath pp, string tempRoot)
-        {
-            this.tempRoot = tempRoot;
-            this.packagePath = pp;
-            this.TagFolder = new DirectoryInfo(pp.TagFolder);
-            this.TempFolder = new DirectoryInfo(tempRoot + "\\tmp\\" + Guid.NewGuid());
+    //    public TarGZExtractTask(PackagePath pp, string tempRoot)
+    //    {
+    //        this.tempRoot = tempRoot;
+    //        this.packagePath = pp;
+    //        this.TagFolder = new DirectoryInfo(pp.TagFolder);
+    //        this.TempFolder = new DirectoryInfo(tempRoot + "\\tmp\\" + Guid.NewGuid());
 
-        }
+    //    }
 
-        public async Task RunAsync()
-        {
-            try
-            {
-                string url = this.packagePath.PrivateNpmUrl;
+    //    public async Task RunAsync()
+    //    {
+    //        try
+    //        {
+    //            string url = this.packagePath.PrivateNpmUrl;
 
-                using (var client = new HttpClient())
-                {
-                    using (var stream = await client.GetStreamAsync(url))
-                    {
-                        using (var ungzStream = new GZipInputStream(stream))
-                        {
-                            using (var tar = TarArchive.CreateInputTarArchive(ungzStream))
-                            {
-                                // tar.ExtractContents(packagePath.TagFolder);
+    //            await DownloadAsync(url);
 
-                                tar.ExtractContents(TempFolder.FullName);
-                                var parent = TagFolder.Parent;
-                                if (!parent.Exists) {
-                                    parent.Create();
-                                }
-                                Directory.Move(TempFolder.FullName + "\\package", TagFolder.FullName);
 
-                            }
-                        }
 
-                    }
-                }
-            }
-            catch
-            {
-                if (TagFolder.Exists)
-                {
-                    TagFolder.Delete(true);
-                }
-                throw;
-            } finally
-            {
-                TempFolder.Delete(true);
-            }
-        }
+    //        }
+    //        catch
+    //        {
+    //            if (TagFolder.Exists)
+    //            {
+    //                TagFolder.Delete(true);
+    //            }
+    //            throw;
+    //        } finally
+    //        {
+    //            TempFolder.Delete(true);
+    //        }
+    //    }
 
-        public void Dispose()
-        {
+    //    private async Task DownloadAsync(string url)
+    //    {
+    //        using (var client = new HttpClient())
+    //        {
+    //            using (var stream = await client.GetStreamAsync(url))
+    //            {
+    //                using (var ungzStream = new GZipInputStream(stream))
+    //                {
+    //                    using (var tar = TarArchive.CreateInputTarArchive(ungzStream))
+    //                    {
+    //                        // tar.ExtractContents(packagePath.TagFolder);
 
-        }
-    }
+    //                        tar.ExtractContents(TempFolder.FullName);
+    //                        var parent = TagFolder.Parent;
+    //                        if (!parent.Exists)
+    //                        {
+    //                            parent.Create();
+    //                        }
+    //                        Directory.Move(TempFolder.FullName + "\\package", TagFolder.FullName);
+
+    //                    }
+    //                }
+
+    //            }
+    //        }
+    //    }
+
+    //    public void Dispose()
+    //    {
+
+    //    }
+    //}
 }

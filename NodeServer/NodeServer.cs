@@ -28,20 +28,17 @@ namespace NodeServer
         readonly IServiceProvider services;
         readonly IMemoryCache cache;
         readonly IEnumerable<PackagePath> privatePackages;
-        readonly string tempFolder;
-        readonly string npmUrlTemplate;
-        string registry;
+        public NodeServerOptions Options { get; }
 
         public NodeServer(
             IServiceProvider services,
             NodeServerOptions options)
         {
-            this.tempFolder = options.TempFolder;
             var reg = options.NPMRegistry.TrimEnd('/') + "/";
-            this.npmUrlTemplate =  reg + "{package}/-/{id}-{version}.tgz";
-            this.registry = reg;
+            this.Options = options;
+            this.Options.NPMRegistry = reg;
             this.privatePackages = options.PrivatePackages.Select( x => {
-                return new PackagePath(x.ParseNPMPath(), true, tempFolder, this.npmUrlTemplate);
+                return new PackagePath(options, x.ParseNPMPath(), true);
             } );
             this.cache = services.GetService<IMemoryCache>();
             this.services = services;            
@@ -62,14 +59,14 @@ namespace NodeServer
                 }
             }
 
-            return new PackagePath((package, version, path), existing != null, tempFolder, this.npmUrlTemplate);
+            return new PackagePath(this.Options, (package, version, path), existing != null);
         }
 
         public async Task DownloadAsync(PackagePath packagePath)
         {
             if (!Directory.Exists(packagePath.TagFolder))
             {
-                using(var tgz = new TarGZExtractTask(packagePath, packagePath.TempRoot))
+                using(var tgz = new PackageInstallTask(packagePath))
                 {
                     await tgz.RunAsync();
                 }
@@ -112,24 +109,24 @@ namespace NodeServer
                     await DownloadAsync(packagePath);
                 }
 
-                if (!Directory.Exists($"{packagePath.TagFolder}\\node_modules"))
-                {
-                    using (var batch = new TemporaryFile("bat", packagePath.TempRoot + "\\tmp\\bat"))
-                    {
-                        System.Threading.CancellationTokenSource ct = new System.Threading.CancellationTokenSource();
+                //if (!Directory.Exists($"{packagePath.TagFolder}\\node_modules"))
+                //{
+                //    using (var batch = new TemporaryFile("bat", packagePath.TempRoot + "\\tmp\\bat"))
+                //    {
+                //        System.Threading.CancellationTokenSource ct = new System.Threading.CancellationTokenSource();
 
-                        await batch.AppendLines("npm install --registry " + this.registry);
+                //        await batch.AppendLines("npm install --registry " + this.Options.NPMRegistry);
 
-                        var processTask = new ProcessTask(batch.File.FullName, packagePath.TagFolder, ct.Token);
+                //        var processTask = new ProcessTask(batch.File.FullName, packagePath.TagFolder, ct.Token);
 
-                        var status = await processTask.RunAsync();
+                //        var status = await processTask.RunAsync();
 
-                        if (status != 0)
-                        {
-                            throw new InvalidOperationException(processTask.Error + "\r\n" + processTask.Log);
-                        }
-                    }
-                }
+                //        if (status != 0)
+                //        {
+                //            throw new InvalidOperationException(processTask.Error + "\r\n" + processTask.Log);
+                //        }
+                //    }
+                //}
             } finally {
                 lock (loading)
                 {

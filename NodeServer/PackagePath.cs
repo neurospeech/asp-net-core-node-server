@@ -6,10 +6,7 @@ namespace NodeServer
     public class PackagePath
     {
 
-        public string PrivateNpmUrl => npmUrlTemplate
-                            .Replace("{package}", Package)
-                            .Replace("{id}", this.ID)
-                            .Replace("{version}", Version);
+        public string PrivateNpmUrl => $"{Options.NPMRegistry}{Package}/-/{ID}-{Version}.tgz";
 
         public readonly bool isPrivate;
         public readonly string Package;
@@ -17,23 +14,24 @@ namespace NodeServer
         public readonly string Path;
         public readonly string TempRoot;
 
-        private readonly string npmUrlTemplate;
+        // private readonly string npmUrlTemplate;
 
         public string ID => Package.Split("/").Last();
 
         public string Tag => $"v{Version}";
 
-        public string TagFolder => $"{TempRoot}\\git-npm\\{Package}\\tag\\{Tag}";
+        public string TagFolder
+                => $"{Options.TempFolder}\\git-npm\\{Package}\\tag\\{Tag}";
+    
+        public NodeServerOptions Options { get; }
 
 
         public PackagePath(
+            NodeServerOptions options,
             (string, string, string) p,
-            bool isPrivate,
-            string tempRoot,
-            string npmUrlTemplate)
+            bool isPrivate)
         {
-            this.TempRoot = tempRoot;
-            this.npmUrlTemplate = npmUrlTemplate;
+            this.Options = options;
             this.isPrivate = isPrivate;
             (this.Package, this.Version, this.Path) = p;
         }
