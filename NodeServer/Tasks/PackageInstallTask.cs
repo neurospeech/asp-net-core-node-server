@@ -65,19 +65,19 @@ namespace NodeServer.Tasks
                 {
                     continue;
                 }
-                string pn = $"{key}@{value}";
+                string pn = $"{key.Name}@{value}";
                 var cp = new PackagePath(package.Options, pn.ParseNPMPath(), true);
 
-                if (queuedPackages.Contains(cp.PrivateNpmUrl))
+                if (queuedPackages.Contains(cp.Package))
                 {
                     continue;
                 }
-                queuedPackages.Add(cp.PrivateNpmUrl);
+                queuedPackages.Add(cp.Package);
                 dependencies.Add(cp);
             }
 
             await Task.WhenAll( dependencies.Select((p) =>
-                InstallAsync(p, this.packagePath.TagFolder + "\\node_modules")
+                InstallAsync(p, $"{packagePath.TagFolder}\\node_modules\\{p.Package}")
             ) );
 
         }
@@ -104,13 +104,23 @@ namespace NodeServer.Tasks
                             {
                                 parent.Create();
                             }
-                            Directory.Move(tempFolder.FullName + "\\package", tagFolder.FullName);
+
+                            var tmp = tempFolder.GetDirectories()[0];
+
+                            Directory.Move(tmp.FullName, tagFolder.FullName);
 
                         }
                     }
 
                 }
-            } catch
+
+                if (tempFolder.Exists)
+                {
+                    tempFolder.Delete(true);
+                }
+
+            }
+            catch
             {
                 if(tagFolder.Exists)
                 {
@@ -119,10 +129,10 @@ namespace NodeServer.Tasks
                 throw;
             } finally
             {
-                if (tempFolder.Exists)
-                {
-                    tempFolder.Delete(true);
-                }
+                //if (tempFolder.Exists)
+                //{
+                //    tempFolder.Delete(true);
+                //}
             }
         }
 
