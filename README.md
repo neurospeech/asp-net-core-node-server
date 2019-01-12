@@ -1,3 +1,4 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/rya0tf5dim3d1596?svg=true)](https://ci.appveyor.com/project/neurospeech/asp-net-core-node-server) [![NuGet](https://img.shields.io/nuget/v/NeuroSpeech.NodeServer.svg?label=NuGet)](https://www.nuget.org/packages/NeuroSpeech.NodeServer)
 # NodeServer for ASP.NET Core
 
 An extension of NodeServices to execute side by side versions of node packages.
