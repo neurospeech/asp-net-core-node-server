@@ -21,7 +21,7 @@ namespace NodeServer
         public string Tag => $"v{Version}";
 
         public string TagFolder
-                => $"{Options.TempFolder}\\git-npm\\{Package}\\tag\\{Tag}";
+                => $"{Options.TempFolder}\\npm\\{Package}\\{Tag}";
     
         public NodeServerOptions Options { get; }
 

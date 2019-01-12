@@ -109,24 +109,6 @@ namespace NodeServer
                     await DownloadAsync(packagePath);
                 }
 
-                //if (!Directory.Exists($"{packagePath.TagFolder}\\node_modules"))
-                //{
-                //    using (var batch = new TemporaryFile("bat", packagePath.TempRoot + "\\tmp\\bat"))
-                //    {
-                //        System.Threading.CancellationTokenSource ct = new System.Threading.CancellationTokenSource();
-
-                //        await batch.AppendLines("npm install --registry " + this.Options.NPMRegistry);
-
-                //        var processTask = new ProcessTask(batch.File.FullName, packagePath.TagFolder, ct.Token);
-
-                //        var status = await processTask.RunAsync();
-
-                //        if (status != 0)
-                //        {
-                //            throw new InvalidOperationException(processTask.Error + "\r\n" + processTask.Log);
-                //        }
-                //    }
-                //}
             } finally {
                 lock (loading)
                 {
