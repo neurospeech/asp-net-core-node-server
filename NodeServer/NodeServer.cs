@@ -10,16 +10,33 @@ using System.Linq;
 using System.IO;
 using NodeServer.Tasks;
 using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 
 namespace NodeServer
 {
     public class NodeServerOptions
     {
+        /// <summary>
+        /// Folder where node packages will be downloaded
+        /// </summary>
         public string TempFolder { get; set; } = "d:\\temp\\ns-npm";
 
+
+        /// <summary>
+        /// NPM Registry used to download packages
+        /// </summary>
         public string NPMRegistry { get; set; }
 
+
+        /// <summary>
+        /// White list of packages to execute
+        /// </summary>
         public string[] PrivatePackages { get; set; }
+
+        /// <summary>
+        /// Time to live, after which NodeServer will dispose
+        /// </summary>
+        public TimeSpan TTL { get; set; } = TimeSpan.FromHours(1);
     }
 
     public class NodeServer
@@ -129,6 +146,16 @@ namespace NodeServer
                 var s = NodeServicesFactory.CreateNodeServices(new NodeServicesOptions(services) {
                     ProjectPath = pp.TagFolder,
                     NodeInstanceOutputLogger = services.GetService<ILogger<NodeServer>>()
+                });
+
+                entry.RegisterPostEvictionCallback((x1, x2, x3, x4) => {
+                    try
+                    {
+                        s.Dispose();
+                    } catch(Exception ex)
+                    {
+                        Trace.WriteLine(ex);
+                    }
                 });
 
                 return new NodePackage {
