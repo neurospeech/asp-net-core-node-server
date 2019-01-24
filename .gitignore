@@ -71,3 +71,4 @@ typings/
 /SampleWebApp/obj
 /SampleWebApp/bin
 /NodePackageService/obj
+/NodePackageService/bin/Debug

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
-namespace NodeServer
+namespace NeuroSpeech
 {
     public static class NodePackageServiceExtensions
     {

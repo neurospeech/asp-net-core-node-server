@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace NodeServer.Tasks
+namespace NeuroSpeech.Tasks
 {
     public delegate void TaskOutputHandler(object sender, DataReceivedEventArgs args);
 

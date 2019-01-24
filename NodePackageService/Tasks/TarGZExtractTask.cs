@@ -7,7 +7,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NodeServer.Tasks
+namespace NeuroSpeech.Tasks
 {
     //public class TarGZExtractTask : IDisposable
     //{

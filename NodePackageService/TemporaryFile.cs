@@ -2,7 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 
-namespace NodeServer
+namespace NeuroSpeech
 {
     public class TemporaryFile : IDisposable
     {

@@ -11,7 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NodeServerTest", "NodeServerTest\NodeServerTest.csproj", "{E6682D8C-5BB9-4924-89E2-95C6BE50125E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NodePackageService", "NodePackageService\NodePackageService.csproj", "{D2466C9C-0259-4B80-AE9F-175C859BFDB4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeuroSpeech.NodePackageService", "NodePackageService\NeuroSpeech.NodePackageService.csproj", "{D2466C9C-0259-4B80-AE9F-175C859BFDB4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
+using NeuroSpeech;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -49,7 +50,7 @@ namespace NodeServerTest
                 .AddMemoryCache()
                 .BuildServiceProvider();
 
-            var server = new NodeServer.NodePackageService(serviceProvider, new NodeServer.NodePackageServiceOptions
+            var server = new NodePackageService(serviceProvider, new NodePackageServiceOptions
             {
                 TempFolder = "D:\\tempg\\" + Guid.NewGuid(),
                 NPMRegistry = "https://proget-2018-10-29-ns.800casting.com/npm/NS-NPM/",

@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace NodeServer.Tasks
+namespace NeuroSpeech.Tasks
 {
     public class FileTransactionTask : IDisposable
     {

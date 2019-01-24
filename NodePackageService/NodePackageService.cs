@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
-using NodeServer.Tasks;
+using NeuroSpeech.Tasks;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 
-namespace NodeServer
+namespace NeuroSpeech
 {
     public class NodePackageService
     {
