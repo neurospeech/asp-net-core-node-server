@@ -5,13 +5,13 @@ using System;
 
 namespace NodeServer
 {
-    public static class NodeServerExtensions
+    public static class NodePackageServiceExtensions
     {
 
-        public static void AddNodeServer(this IServiceCollection services,
-            NodeServerOptions options)
+        public static void AddNodePackageService(this IServiceCollection services,
+            NodePackageServiceOptions options)
         {
-            services.AddSingleton(sp => new NodeServer(sp, options));
+            services.AddSingleton(sp => new NodePackageService(sp, options));
         }
 
         public static IApplicationBuilder UseUIViews(this IApplicationBuilder app, string route = "uiv/")
@@ -41,7 +41,7 @@ namespace NodeServer
                 headers.Add("access-control-allow-headers", "*");
                 headers.Add("access-control-max-age", TimeSpan.FromDays(30).TotalSeconds.ToString());
 
-                var nodeServer = context.RequestServices.GetService<NodeServer>();
+                var nodeServer = context.RequestServices.GetService<NodePackageService>();
 
                 string sp = path.Value.Substring(4);
 

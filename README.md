@@ -5,7 +5,7 @@ An extension of NodeServices to execute side by side versions of node packages.
 
 ## Installation
 
-`Install-Package NeuroSpeech.NodeServer`
+`Install-Package NeuroSpeech.NodePackageService`
 
 Install and setup ProGet from https://inedo.com/proget and publish your private packages onto npm registry inside ProGet. Support for authenticated npm registry will come in future.
 
@@ -17,16 +17,16 @@ Install and setup ProGet from https://inedo.com/proget and publish your private 
 
 ## Security
 
-1. NodeServer does not execute `npm install` or `npm start` script.
+1. NodePackageService does not execute `npm install` or `npm start` script.
 2. TempFolder drive needs write access
 3. Only packages listed in `PrivatePackages` will be downloaded and extracted, however dependencies will not be restricted to package whitelist. Your developers must be careful for not include them in package dependencies.
 
 ## Setup
 
 ```c#
-services.AddSingleton<NodeServer.NodeServer>(
-    sp => new NodeServer.NodeServer(sp,
-        new NodeServer.NodeServerOptions
+services.AddSingleton<NodePackageService>(
+    sp => new NodePackageService(sp,
+        new NodePackageServiceOptions
         {
             // This must be unique to avoid multiple process accessing same
             // folder conflicts
@@ -49,18 +49,16 @@ services.AddSingleton<NodeServer.NodeServer>(
         [FromRoute] string name,
         [FromRoute] string version,
         [FromBody] EmailModel model,
-        [FromService] NodeServer.NodeServer server
+        [FromService] NodePackageService packageService
     ) {
 
         // get node services from the installed package version
         // if version does not exist, it will download package
         // along with all its dependencies
         var package = await 
-            server.GetInstalledPackageASync($"@company/template@{version}");
+            packageService.GetInstalledPackageASync($"@company/template@{version}");
 
-        var nodeServices = package.NodeServices;
-
-        return await nodeServices.InvokeExportAsync(
+        return await package.NodeServices.InvokeExportAsync(
             "index.js",
             "default",
             new {

@@ -23,11 +23,11 @@ namespace NodeServer
         public string TagFolder
                 => $"{Options.TempFolder}\\npm\\{Package}\\{Tag}";
     
-        public NodeServerOptions Options { get; }
+        public NodePackageServiceOptions Options { get; }
 
 
         public PackagePath(
-            NodeServerOptions options,
+            NodePackageServiceOptions options,
             (string, string, string) p,
             bool isPrivate)
         {

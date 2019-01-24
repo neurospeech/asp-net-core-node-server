@@ -4,13 +4,13 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <ApplicationIcon />
     <OutputType>Library</OutputType>
-    <PackageId>NeuroSpeech.NodeServer</PackageId>
+    <PackageId>NeuroSpeech.NodePackageService</PackageId>
     <Version>1.0.1</Version>
     <StartupObject />
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Akash Kava</Authors>
     <Company>NeuroSpeech Technologies Pvt Ltd</Company>
-    <Product>NeuroSpeech NodeServer</Product>
+    <Product>NeuroSpeech NodePackageService</Product>
   </PropertyGroup>
   
   <ItemGroup>

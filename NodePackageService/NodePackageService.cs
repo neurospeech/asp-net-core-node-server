@@ -14,42 +14,17 @@ using System.Diagnostics;
 
 namespace NodeServer
 {
-    public class NodeServerOptions
-    {
-        /// <summary>
-        /// Folder where node packages will be downloaded
-        /// </summary>
-        public string TempFolder { get; set; } = "d:\\temp\\ns-npm";
-
-
-        /// <summary>
-        /// NPM Registry used to download packages
-        /// </summary>
-        public string NPMRegistry { get; set; }
-
-
-        /// <summary>
-        /// White list of packages to execute
-        /// </summary>
-        public string[] PrivatePackages { get; set; }
-
-        /// <summary>
-        /// Time to live, after which NodeServer will dispose
-        /// </summary>
-        public TimeSpan TTL { get; set; } = TimeSpan.FromHours(1);
-    }
-
-    public class NodeServer
+    public class NodePackageService
     {
 
         readonly IServiceProvider services;
         readonly IMemoryCache cache;
         readonly IEnumerable<PackagePath> privatePackages;
-        public NodeServerOptions Options { get; }
+        public NodePackageServiceOptions Options { get; }
 
-        public NodeServer(
+        public NodePackageService(
             IServiceProvider services,
-            NodeServerOptions options)
+            NodePackageServiceOptions options)
         {
             var reg = options.NPMRegistry.TrimEnd('/') + "/";
             this.Options = options;
@@ -143,10 +118,25 @@ namespace NodeServer
 
                 await InstallAsync(pp);
 
-                var s = NodeServicesFactory.CreateNodeServices(new NodeServicesOptions(services) {
+                var options = this.Options.NodeServicesOptions ?? new NodeServicesOptions(services)
+                {
                     ProjectPath = pp.TagFolder,
-                    NodeInstanceOutputLogger = services.GetService<ILogger<NodeServer>>()
-                });
+                    NodeInstanceOutputLogger = services.GetService<ILogger<NodePackageService>>()
+                };
+
+                if (this.Options.EnvironmentVariables != null)
+                {
+                    if (options.EnvironmentVariables == null)
+                    {
+                        options.EnvironmentVariables = new Dictionary<string, string>();
+                    }
+                    foreach (var item in this.Options.EnvironmentVariables)
+                    {
+                        options.EnvironmentVariables[item.Key] = item.Value;
+                    }
+                }
+
+                var s = NodeServicesFactory.CreateNodeServices(options);
 
                 entry.RegisterPostEvictionCallback((x1, x2, x3, x4) => {
                     try

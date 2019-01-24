@@ -49,7 +49,7 @@ namespace NodeServerTest
                 .AddMemoryCache()
                 .BuildServiceProvider();
 
-            var server = new NodeServer.NodeServer(serviceProvider, new NodeServer.NodeServerOptions
+            var server = new NodeServer.NodePackageService(serviceProvider, new NodeServer.NodePackageServiceOptions
             {
                 TempFolder = "D:\\tempg\\" + Guid.NewGuid(),
                 NPMRegistry = "https://proget-2018-10-29-ns.800casting.com/npm/NS-NPM/",
